@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --surface: #f4f6f5;
+  --surface-strong: #e9eeec;
+  --accent1: #1a5686;
+  --accent2: #7abbee;
+  --buy1: #FF7A00;
+  --buy2: #E66900;
+  --accent5: #ff0000;
+  --accent6: #ff0000;
+  --text: #0f1215;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-accent1: var(--accent1);
+  --color-accent2: var(--accent2);
+  --color-buy1: var(--buy1);
+  --color-buy2: var(--buy2);
+  --color-accent5: var(--accent5);
+  --color-accent6: var(--accent6);
+  --color-text: var(--text);
+  --font-serif: var(--font-dm-serif);
+  --font-sans: var(--font-sans);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+}
+
+:root {
+  view-transition-name: root;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: ease;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 150ms ease, text-decoration-color 150ms ease;
+}
+
+* {
+  transition: color 180ms ease, background-color 180ms ease,
+    border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.section-title {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.35em;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0.05em;
+  width: 38%;
+  height: 0.13em;
+  background: var(--accent1);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 600ms ease, transform 600ms ease;
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes cart-wiggle {
+  0% {
+    transform: rotate(0deg);
+  }
+  2% {
+    transform: rotate(12deg);
+  }
+  4% {
+    transform: rotate(0deg);
+  }
+  6% {
+    transform: rotate(-12deg);
+  }
+  8% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(12deg);
+  }
+  12% {
+    transform: rotate(0deg);
+  }
+  14% {
+    transform: rotate(-12deg);
+  }
+  16% {
+    transform: rotate(0deg);
+  }
+  18% {
+    transform: rotate(12deg);
+  }
+  20% {
+    transform: rotate(0deg);
+  }
+  22% {
+    transform: rotate(-18deg);
+  }
+  24% {
+    transform: rotate(0deg);
+  }
+  26% {
+    transform: rotate(18deg);
+  }
+  28% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.cart-add-wiggle {
+  display: inline-flex;
+  transform-origin: center;
+  animation: cart-wiggle 7s ease-in-out 0s infinite;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent1);
+  outline-offset: 2px;
+}
