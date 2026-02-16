@@ -1,0 +1,1 @@
+El archivo prisma-link.cjs y la configuración relacionada con Prisma han sido eliminados porque Prisma y sus dependencias presentaban vulnerabilidades y han sido removidas del proyecto. Si necesitas ORM, considera alternativas como Drizzle ORM, MikroORM o TypeORM.

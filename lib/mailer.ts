@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import { SMTPClient } from "emailjs";
 
 export const getTransporter = () => {
   const host = process.env.SMTP_HOST;
@@ -10,13 +10,11 @@ export const getTransporter = () => {
     throw new Error("Faltan variables SMTP.");
   }
 
-  return nodemailer.createTransport({
+  return new SMTPClient({
+    user,
+    password: pass,
     host,
     port,
-    secure: port === 465,
-    auth: {
-      user,
-      pass,
-    },
+    ssl: port === 465,
   });
 };
