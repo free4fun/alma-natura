@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { MercadoPagoConfig, Preference } from "mercadopago";
-import prisma from "@/lib/db";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 import { siteMetadata } from "@/lib/site";
 import { getProductBySlug } from "@/lib/data";
 import { calculatePricing } from "@/lib/pricing";
@@ -19,8 +20,8 @@ export async function POST(request: Request) {
     const coupon = String(formData.get("coupon") || "");
     const item = await getProductBySlug(slug);
 
-    if (!item) {
-      return NextResponse.json({ error: "Producto inválido." }, { status: 400 });
+    if (!item || item.price == null) {
+      return NextResponse.json({ error: "Producto inválido o sin precio." }, { status: 400 });
     }
 
     const accessToken = process.env.MP_ACCESS_TOKEN;
@@ -102,7 +103,7 @@ export async function POST(request: Request) {
           product: slug,
           coupon,
         },
-        external_reference: order.id,
+        external_reference: String(order.id),
         back_urls: {
           success: `${siteMetadata.siteUrl}/checkout/${slug}?status=success`,
           failure: `${siteMetadata.siteUrl}/checkout/${slug}?status=failure`,

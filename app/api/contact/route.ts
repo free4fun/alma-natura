@@ -51,34 +51,44 @@ export async function POST(request: Request) {
 
     const transporter = getTransporter();
 
-    await transporter.sendMail({
-      from: mailFrom,
-      to: mailTo,
-      replyTo: email,
-      subject: `Nueva consulta Alma Natura — ${nombre}`,
-      text: `Nueva consulta desde el sitio Alma Natura\n\nNombre: ${nombre}\nEmail: ${email}\nExperiencia: ${formato}\n\nMensaje:\n${mensaje}`,
-      html: `
-        <p><strong>Nueva consulta desde el sitio Alma Natura</strong></p>
-        <p><strong>Nombre:</strong> ${nombre}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Experiencia:</strong> ${formato}</p>
-        <p><strong>Mensaje:</strong></p>
-        <p>${mensaje.replace(/\n/g, "<br />")}</p>
-      `,
+    await new Promise((resolve, reject) => {
+      transporter.send({
+        from: mailFrom,
+        to: mailTo,
+        replyTo: email,
+        subject: `Nueva consulta Alma Natura — ${nombre}`,
+        text: `Nueva consulta desde el sitio Alma Natura\n\nNombre: ${nombre}\nEmail: ${email}\nExperiencia: ${formato}\n\nMensaje:\n${mensaje}`,
+        html: `
+          <p><strong>Nueva consulta desde el sitio Alma Natura</strong></p>
+          <p><strong>Nombre:</strong> ${nombre}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Experiencia:</strong> ${formato}</p>
+          <p><strong>Mensaje:</strong></p>
+          <p>${mensaje.replace(/\n/g, "<br />")}</p>
+        `,
+      }, (err, message) => {
+        if (err) reject(err);
+        else resolve(message);
+      });
     });
 
-    await transporter.sendMail({
-      from: mailFrom,
-      to: email,
-      subject: "Recibimos tu consulta — Alma Natura",
-      text: `Hola ${nombre},\n\nGracias por escribir. Recibimos tu consulta y respondemos en 24–48h con propuestas posibles.\n\nAlma Natura ofrece un espacio de prácticas basadas en la naturaleza para la introspección personal.\n\nPodés conocer más en ${siteUrl}.\n\nAlma Natura`,
-      html: `
-        <p>Hola ${nombre},</p>
-        <p>Gracias por escribir. Recibimos tu consulta y respondemos en 24–48h con propuestas posibles.</p>
-        <p>Alma Natura ofrece un espacio de prácticas basadas en la naturaleza para la introspección personal.</p>
-        <p>Podés conocer más en <a href="${siteUrl}">${siteUrl}</a>.</p>
-        <p>Alma Natura</p>
-      `,
+    await new Promise((resolve, reject) => {
+      transporter.send({
+        from: mailFrom,
+        to: email,
+        subject: "Recibimos tu consulta — Alma Natura",
+        text: `Hola ${nombre},\n\nGracias por escribir. Recibimos tu consulta y respondemos en 24–48h con propuestas posibles.\n\nAlma Natura ofrece un espacio de prácticas basadas en la naturaleza para la introspección personal.\n\nPodés conocer más en ${siteUrl}.\n\nAlma Natura`,
+        html: `
+          <p>Hola ${nombre},</p>
+          <p>Gracias por escribir. Recibimos tu consulta y respondemos en 24–48h con propuestas posibles.</p>
+          <p>Alma Natura ofrece un espacio de prácticas basadas en la naturaleza para la introspección personal.</p>
+          <p>Podés conocer más en <a href="${siteUrl}">${siteUrl}</a>.</p>
+          <p>Alma Natura</p>
+        `,
+      }, (err, message) => {
+        if (err) reject(err);
+        else resolve(message);
+      });
     });
 
     return NextResponse.json({ ok: true });

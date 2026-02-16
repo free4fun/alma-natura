@@ -1,0 +1,102 @@
+model Experience {
+  id              Int      @id @default(autoincrement())
+  slug            String  @unique
+  title           String
+  summary         String?
+  details         String?
+  discountPercent Int?
+  coupons         String? // JSON string or array, ajustar si es necesario
+  intro           String?
+  highlights      String? // JSON string or array, ajustar si es necesario
+  bullets         String? // JSON string or array, ajustar si es necesario
+  outcomes        String? // JSON string or array, ajustar si es necesario
+  images          String? // JSON string or array, ajustar si es necesario
+  icon            String?
+  price           Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+model ElementCategory {
+  id          Int    @id @default(autoincrement())
+  title       String @unique
+  description String?
+}
+model DownloadAccess {
+  id       Int    @id @default(autoincrement())
+  fileSlug String
+  email    String?
+  name     String?
+  orderId  Int?
+  order    Order? @relation(fields: [orderId], references: [id])
+}
+// Ejemplo de schema.prisma para SQLite
+// Ajusta los modelos según tus necesidades reales
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  status    String
+  name      String?
+  email     String?
+  phone     String?
+  document  String?
+  city      String?
+  address   String?
+  notes     String?
+  total     Float
+  mpPreferenceId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  items     OrderItem[]
+  downloadAccess DownloadAccess[]
+}
+
+model OrderItem {
+  id         Int    @id @default(autoincrement())
+  productSlug String
+  title      String
+  price      Float
+  quantity   Int
+  orderId    Int
+  order      Order  @relation(fields: [orderId], references: [id])
+}
+
+model Download {
+  id         Int    @id @default(autoincrement())
+  slug       String @unique
+  title      String
+  description String?
+  details    String?
+  showOnHome Boolean @default(false)
+  access     String?
+  fileUrl    String?
+  image      String?
+  price      Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Element {
+  id                Int      @id @default(autoincrement())
+  slug              String  @unique
+  name              String
+  category          String?
+  categoryDescription String?
+  description       String?
+  details           String?
+  discountPercent   Int?
+  coupons           String? // JSON string or array, adjust as needed
+  image             String?
+  images            String? // JSON string or array, adjust as needed
+  price             Float?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}

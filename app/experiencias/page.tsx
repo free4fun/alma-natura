@@ -17,7 +17,14 @@ export const metadata: Metadata = {
 };
 
 export default async function ExperienciasPage() {
-  const items = await getExperiences();
+  const items = (await getExperiences()) as Array<{
+    title: string;
+    slug: string;
+    summary: string;
+    highlights: string[];
+    icon: IconName;
+    images?: Array<{ src: string; alt?: string }>;
+  }>;
 
   return (
     <div>
@@ -27,9 +34,9 @@ export default async function ExperienciasPage() {
       >
         <ExperiencesGrid
           items={items.map((item) => ({
-            title: item.title,
-            slug: item.slug,
-            summary: item.summary,
+            title: item.title ?? "",
+            slug: item.slug ?? "",
+            summary: item.summary ?? "",
             highlights: item.highlights as string[],
             icon: item.icon as IconName,
             image: Array.isArray(item.images)

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
-import type { Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 import { getMockStore } from "@/lib/mockStore";
 
 export async function GET() {
@@ -50,6 +50,7 @@ export async function PUT(request: Request) {
       const item = {
         id: `dl_${slug}`,
         createdAt: new Date().toISOString(),
+        highlights: [],
         ...base,
       };
       store.downloads.unshift(item);
@@ -65,8 +66,7 @@ export async function PUT(request: Request) {
       fileUrl,
       image,
       price,
-    } as Prisma.DownloadUncheckedUpdateInput;
-
+    };
     const createData = {
       slug,
       title,
@@ -77,14 +77,12 @@ export async function PUT(request: Request) {
       fileUrl,
       image,
       price,
-    } as Prisma.DownloadUncheckedCreateInput;
-
+    };
     const item = await prisma.download.upsert({
       where: { slug },
       update: updateData,
       create: createData,
     });
-
     return NextResponse.json(item);
   } catch (error) {
     return NextResponse.json({ error: "No se pudo guardar." }, { status: 500 });

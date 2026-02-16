@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { MercadoPagoConfig, Preference } from "mercadopago";
-import prisma from "@/lib/db";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 import { siteMetadata } from "@/lib/site";
 import { getProductBySlug } from "@/lib/data";
 import { calculatePricing } from "@/lib/pricing";
@@ -63,7 +64,7 @@ export async function POST(request: Request) {
       await Promise.all(
         items.map(async (entry) => {
           const product = await getProductBySlug(entry.slug);
-          if (!product) return null;
+          if (!product || product.price == null) return null;
           const pricing = calculatePricing({
             basePrice: product.price,
             quantity: Math.max(1, entry.quantity || 1),
@@ -151,7 +152,7 @@ export async function POST(request: Request) {
           notes,
           items,
         },
-        external_reference: order.id,
+        external_reference: String(order.id),
         back_urls: {
           success: `${siteMetadata.siteUrl}/checkout?status=success`,
           failure: `${siteMetadata.siteUrl}/checkout?status=failure`,

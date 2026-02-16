@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import type { Element } from "@prisma/client";
 import Section from "@/components/Section";
 import ToolsCarousel from "@/components/ToolsCarousel";
 import { getElements } from "@/lib/data";
+import { Element as ElementModel } from "@prisma/client";
 
 export const metadata: Metadata = {
   title: "Elementos",
@@ -17,22 +17,38 @@ export const metadata: Metadata = {
 };
 
 export default async function ElementosPage() {
-  const elements = (await getElements()) as Array<
-    Element & { categoryDescription?: string | null }
-  >;
+  const rawElements = await getElements();
+  const elements = rawElements.map((item: any) => ({
+    ...item,
+    details: item.details ?? null,
+    image: item.image ?? null,
+    name: item.name ?? null,
+    id: item.id ?? null,
+    slug: item.slug ?? null,
+    discountPercent: item.discountPercent ?? null,
+    coupons: item.coupons ?? null,
+    images: item.images ?? null,
+    price: item.price ?? null,
+    createdAt: item.createdAt ?? null,
+    updatedAt: item.updatedAt ?? null,
+    description: item.description ?? null,
+    category: item.category ?? null,
+    categoryDescription: item.categoryDescription ?? null,
+  })) as Array<ElementModel & { categoryDescription?: string | null }>;
   const categories = elements.reduce<
     Record<
       string,
       {
         title: string;
         description: string;
-        items: Array<Element & { categoryDescription?: string | null }>;
+        items: Array<ElementModel & { categoryDescription?: string | null }>;
       }
     >
   >((acc, item) => {
-      if (!acc[item.category]) {
-        acc[item.category] = {
-          title: item.category,
+      const key = item.category ?? "Sin categoría";
+      if (!acc[key]) {
+        acc[key] = {
+          title: key,
           description:
             "categoryDescription" in item && item.categoryDescription
               ? item.categoryDescription
@@ -40,7 +56,7 @@ export default async function ElementosPage() {
           items: [],
         };
       }
-      acc[item.category].items.push(item);
+      acc[key].items.push(item);
       return acc;
     }, {});
 
@@ -61,11 +77,11 @@ export default async function ElementosPage() {
                 description: category.description,
                 items: category.items.map((item) => ({
                   slug: item.slug,
-                  name: item.name,
-                  price: item.price,
+                  name: item.name ?? "",
+                  price: item.price ?? 0,
                   discountPercent: item.discountPercent ?? 0,
-                  description: item.description,
-                  image: item.image,
+                  description: item.description ?? "",
+                  image: item.image ?? "",
                 })),
               }}
             />

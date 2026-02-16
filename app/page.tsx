@@ -20,7 +20,14 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const experiences = await getExperiences();
+  const experiences = (await getExperiences()) as Array<{
+    title: string;
+    slug: string;
+    summary: string;
+    highlights: string[];
+    icon: IconName;
+    images?: Array<{ src: string; alt?: string }>;
+  }>;
   const downloads = await getDownloads();
   return (
     <div>
@@ -117,8 +124,8 @@ export default async function Home() {
                 : 0;
             const safeDiscount = Math.min(100, discountPercent);
             const discountedPrice = discountPercent
-              ? Math.round(item.price * (1 - safeDiscount / 100))
-              : item.price;
+              ? Math.round((item.price ?? 0) * (1 - safeDiscount / 100))
+              : item.price ?? 0;
             const isFree = discountedPrice === 0;
 
             return (

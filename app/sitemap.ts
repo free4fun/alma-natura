@@ -11,14 +11,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const elements = await getElements();
   const experiences = await getExperiences();
   const posts = await getPosts();
-  const elementUrls = elements.map((item) => ({
-    url: `${base}/elementos/${item.slug}`,
-    lastModified,
-  }));
-  const experienceUrls = experiences.map((item) => ({
-    url: `${base}/experiencias/${item.slug}`,
-    lastModified,
-  }));
+  const elementUrls = elements
+    .filter((item: any) => typeof item.slug === "string")
+    .map((item: any) => ({
+      url: `${base}/elementos/${item.slug}`,
+      lastModified,
+    }));
+  const experienceUrls = experiences
+    .filter((item: any) => typeof item.slug === "string")
+    .map((item: any) => ({
+      url: `${base}/experiencias/${item.slug}`,
+      lastModified,
+    }));
   const noteUrls = posts
     .filter((post) => post.status === "publicado")
     .map((post) => ({

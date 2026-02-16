@@ -41,7 +41,7 @@ export const mockElements = toolsCategories.flatMap((category, index) =>
     id: `el_${item.slug}`,
     slug: item.slug,
     name: item.name,
-    category: category.title,
+    category: category.title ?? null,
     categoryDescription: category.description,
     description: item.description,
     details: item.description,

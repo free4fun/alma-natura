@@ -1,7 +1,7 @@
-import prisma from "@/lib/db";
+import { PrismaClient, Element as ElementModel } from "@prisma/client";
+const prisma = new PrismaClient();
 import { getMockStore } from "@/lib/mockStore";
 import { downloads as contentDownloads } from "@/lib/content";
-import type { Element } from "@prisma/client";
 
 const demoMode = process.env.DEMO_MODE === "true";
 
@@ -36,7 +36,7 @@ export async function getExperiences() {
   }
   try {
     const items = await prisma.experience.findMany({ orderBy: { createdAt: "asc" } });
-    return items.map((item) => normalizeExperienceDetails(item));
+    return items.map((item) => normalizeExperienceDetails({ ...item, summary: item.summary ?? "" }));
   } catch (error) {
     console.warn("DB no disponible: getExperiences", error);
     return getMockStore().experiences.map((item) => normalizeExperienceDetails(item));
@@ -46,15 +46,15 @@ export async function getExperiences() {
 export async function getExperienceBySlug(slug: string) {
   if (demoMode) {
     const item = getMockStore().experiences.find((item) => item.slug === slug) || null;
-    return item ? normalizeExperienceDetails(item) : null;
+    return item ? normalizeExperienceDetails({ ...item, summary: item.summary ?? "" }) : null;
   }
   try {
     const item = await prisma.experience.findUnique({ where: { slug } });
-    return item ? normalizeExperienceDetails(item) : null;
+    return item ? normalizeExperienceDetails({ ...item, summary: item.summary ?? "" }) : null;
   } catch (error) {
     console.warn("DB no disponible: getExperienceBySlug", error);
     const item = getMockStore().experiences.find((item) => item.slug === slug) || null;
-    return item ? normalizeExperienceDetails(item) : null;
+    return item ? normalizeExperienceDetails({ ...item, summary: item?.summary ?? "" }) : null;
   }
 }
 
@@ -71,14 +71,14 @@ export async function getElements() {
       };
     };
     const [elements, categories] = await Promise.all([
-      prisma.element.findMany({ orderBy: { category: "asc" } }) as Promise<Element[]>,
+      prisma.element.findMany({ orderBy: { category: "asc" } }) as Promise<ElementModel[]>,
       prismaCategory.elementCategory.findMany({ orderBy: { title: "asc" } }),
     ]);
     const categoryMap = new Map<string, string>(
       categories.map((category) => [category.title, category.description])
     );
     return elements.map((item) =>
-      categoryMap.has(item.category)
+      item.category && categoryMap.has(item.category)
         ? { ...item, categoryDescription: categoryMap.get(item.category) }
         : item
     );
@@ -215,7 +215,7 @@ export async function getProductBySlug(slug: string) {
       price: experience.price,
       discountPercent: resolveDiscountPercent(experience),
       coupons: resolveCoupons(experience),
-      image: (experience.images as Array<{ src: string }>)[0]?.src || "",
+      image: Array.isArray(experience.images) ? (experience.images as Array<{ src: string }>)[0]?.src || "" : "",
       type: "experience" as const,
     };
   }

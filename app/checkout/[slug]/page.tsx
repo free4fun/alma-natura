@@ -26,10 +26,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `Checkout | ${item.title}`,
-    description: item.description,
+    description: item.description ?? undefined,
     openGraph: {
       title: `Checkout | ${item.title}`,
-      description: item.description,
+      description: item.description ?? undefined,
       url: `/checkout/${slug}`,
     },
   };
@@ -61,9 +61,9 @@ export default async function CheckoutPage({ params }: PageProps) {
                 </p>
               </div>
             </div>
-            <p className="mt-4 text-text/80">{item.description}</p>
+            <p className="mt-4 text-text/80">{item.description ?? undefined}</p>
             <CheckoutCouponPrice
-              basePrice={item.price}
+              basePrice={item.price ?? 0}
               discountPercent={item.discountPercent ?? 0}
               coupons={(item.coupons as Array<{ code: string; percent: number; minQty: number }>) || []}
             />
@@ -161,7 +161,7 @@ export default async function CheckoutPage({ params }: PageProps) {
           </div>
           <div className="relative aspect-square overflow-hidden rounded-2xl border border-text/10 bg-surface">
             <Image
-              src={item.image}
+              src={item.image ?? "/placeholder.png"}
               alt={item.title}
               fill
               className="object-cover"

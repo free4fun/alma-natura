@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 type DownloadPayload = {
   name?: string;
